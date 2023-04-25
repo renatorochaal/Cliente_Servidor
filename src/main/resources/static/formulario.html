@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<head>
+    <title>NomeCadastro</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<h1>NomeCadastro</h1>
+
+<h2>Cadastrar Nome</h2>
+<form id="cadastrar-form">
+    <label for="nome">Nome:</label>
+    <input type="text" id="nome" name="nome"><br><br>
+    <button type="submit">Cadastrar</button>
+</form>
+
+<h2>Consultar Nome</h2>
+<form id="consultar-form">
+    <label for="id">ID:</label>
+    <input type="text" id="id" name="id"><br><br>
+    <button type="submit">Consultar</button>
+</form>
+
+<h2>Resultado</h2>
+<div id="resultado"></div>
+
+<script>
+    const cadastrarForm = document.querySelector('#cadastrar-form');
+    const consultarForm = document.querySelector('#consultar-form');
+    const resultado = document.querySelector('#resultado');
+
+    cadastrarForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const nome = cadastrarForm.querySelector('#nome').value;
+        const response = await fetch('/nomes', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ nome })
+        });
+        const json = await response.json();
+        resultado.innerText = `Nome cadastrado com ID ${json.id}`;
+        cadastrarForm.reset();
+    });
+
+    consultarForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const id = consultarForm.querySelector('#id').value;
+        const response = await fetch(`/nomes/${id}`);
+        if (response.ok) {
+            const json = await response.json();
+            resultado.innerText = `Nome encontrado: ${json.nome}`;
+        } else {
+            resultado.innerText = `Nome não encontrado`;
+        }
+        consultarForm.reset();
+    });
+</script>
+</body>
